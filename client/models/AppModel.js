@@ -4,6 +4,7 @@ var AppModel = Backbone.Model.extend({
   initialize: function(params){
     this.set('currentSong', new SongModel());
     this.set('songQueue', new SongQueue());
+    this.set('isPlaying', false);
 
     /* Note that 'this' is passed as the third argument. That third argument is
     the context. The 'play' handler will always be bound to that context we pass in.
@@ -14,12 +15,16 @@ var AppModel = Backbone.Model.extend({
 
     params.library.on('play', function(song){
       this.set('currentSong', song);
+      this.set('isPlaying', true);
     }, this);
 
     // is there an optimized to put logic?
     params.library.on('enqueue', function(song){
       // use native "add" method from Backbone collections
-      this.get('songQueue').addToQueue(song);
+      this.get('songQueue').add(song);
+      if (this.get('isPlaying') === false) {
+        this.get('songQueue').playFirst();
+      }
     }, this);
 
     params.library.on('removeFromQueue', function(song){
@@ -28,11 +33,10 @@ var AppModel = Backbone.Model.extend({
 
     params.library.on('dequeue', function(){
       this.get('songQueue').remove(this.get('songQueue').at(0));
-      console.log(this.get('songQueue'));
     }, this);
 
     params.library.on('ended', function(song){
-        this.get('currentSong').dequeue();
+        this.set('isPlaying', false);
         this.get('songQueue').playFirst();
     }, this);
   }
