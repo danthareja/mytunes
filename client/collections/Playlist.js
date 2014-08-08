@@ -10,6 +10,4 @@ var Playlist = Songs.extend({
     this.trigger('playAll', this);
   }
 
-
-
 });

@@ -25,6 +25,10 @@ var AppModel = Backbone.Model.extend({
       });
     }, this);
 
+    params.playlistLibrary.on('addNewPlaylist', function(song) {
+
+    }, this);
+
     params.library.on('addToPlaylist', function(song) {
       console.log('currentPlaylist');
       // change to add to specific playlist name
